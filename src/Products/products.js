@@ -14,7 +14,10 @@ export default function Products({ myproducts, handleAddToCart }) {
     <>
       {/* <div>This Worked</div> */}
       <section style={{ backgroundColor: "#eee" }}>
-        <div className="d-flex justify-content-between align-items-center mb-4 ml-4">
+      <div className="container h-100 py-5">
+            <div className="row d-flex justify-content-center align-items-center h-100">
+              <div className="col-12">
+        <div>
           <h3 className="fw-bold mb-0 text-black">Products</h3>
         </div>
         <div className="container py-5 px-3">
@@ -25,6 +28,9 @@ export default function Products({ myproducts, handleAddToCart }) {
               );
             })}
           </div>
+        </div>
+        </div>
+        </div>
         </div>
       </section>
     </>
