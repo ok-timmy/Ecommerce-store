@@ -1,90 +1,88 @@
-import { Button } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import CartItem from "./CartItem";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import "bootstrap-css-only/css/bootstrap.min.css";
 import "mdbreact/dist/css/mdb.css";
+import { Link } from "react-router-dom";
 
-function Cart({ fetchCart, handleEmptyCart, handleUpdateCart, handleDelete }) {
-  console.log(fetchCart);
-  // const cartproducts = cart
-  // console.log(handleEmptyCart)
-  const [cartproducts, setCartproducts] = useState({});
-  // const [cartitems, setCartitems] = useState([]);
-  const [loading, setLoading] = useState(true);
+function Cart({ cartlist, handleEmptyCart, handleUpdateCart, handleDelete }) {
+  // console.log(cartlist);
+  const cartitems = cartlist.line_items;
+  // console.log(cartitems);
+  if (cartitems.length ===0) {
+    return (
+      <div className="d-flex align-items-center px-3 mt-4">
+      <h3 className="font-bold">
+        You have no items in your shopping cart, start adding some!
+      </h3>
+      </div>
+    );
+  } else {
+    return (
+      <>
+        <section className="h-100" style={{ backgroundColor: "#eee" }}>
+          <div className="container h-100 py-5">
+            <div className="row d-flex justify-content-center align-items-center h-100">
+              <div className="col-10">
+                <div className="d-flex justify-content-between align-items-center mb-4">
+                  <h3 className="fw-normal mb-0 text-black">Shopping Cart</h3>
+                </div>
 
-  useEffect(() => {
-    fetchCart(setCartproducts);
-    setLoading(false);
-  }, []);
+               
+                  {cartitems.map((cartitem) => {
+                    return (
+                      <CartItem
+                        cartitem={cartitem}
+                        key={cartitem.id}
+                        className="cart__inner"
+                        handleUpdateCart={handleUpdateCart}
+                        handleDelete={handleDelete}
+                      />
+                    );
+                  }
+                )}
 
-  console.log(cartproducts);
-const cartitems = cartproducts.line_items;
-console.log(cartitems)
-  const callCart = () => {
-    if (!cartitems) {
-      return (
-        <p className="cart__none">
-          You have no items in your shopping cart, start adding some!
-        </p>
-      );
-    } else {
-      // console.log(cartproducts)
-      return (
-        <>
-           <div class="card">
-                    <div class="card-body d-flex justify-content-center align-items-center">
-                      <button
-                        type="button"
-                        class="btn btn-danger btn-block btn-lg w-50 "
-                        onClick={()=>{handleEmptyCart()}}
-                      >
-                        Empty Cart
-                      </button>
+                <div className="card mb-4">
+                  <div className="card-body p-4 d-flex flex-row">
+                    <div className="form-outline flex-fill">
+                      <h3>Total:</h3>
                     </div>
+                    <h3>{cartlist.subtotal.formatted_with_symbol}</h3>
                   </div>
-          <section class="h-100" style={{ backgroundColor: "#eee" }}>
-            <div class="container h-100 py-5">
-              <div class="row d-flex justify-content-center align-items-center h-100">
-                <div class="col-10">
-                  <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h3 class="fw-normal mb-0 text-black">Shopping Cart</h3>
+                </div>
+
+                <div className="card mb-1">
+                  <div className="card-body d-flex justify-content-center align-items-center">
+                    <button
+                      type="button"
+                      className="btn btn-danger btn-block btn-lg w-75 "
+                      onClick={() => {
+                        handleEmptyCart();
+                      }}
+                    >
+                      Empty Cart
+                    </button>
                   </div>
-
-               {cartitems === undefined ? <div>Loading...</div> : cartitems.map((cartitem)=> {
-                  return <CartItem
-                  cartitem={cartitem}
-                  key={cartitem.id}
-                  className="cart__inner"
-                  handleUpdateCart={handleUpdateCart}
-                  handleDelete ={handleDelete}
-                />
-               })}
-                  
-
-                  <div class="card">
-                    <div class="card-body">
-                      <button
-                        type="button"
-                        class="btn btn-warning btn-block btn-lg"
-                      >
-                        Proceed to Checkout
-                      </button>
-                    </div>
+                </div>
+                <div className="card">
+                  <div className="card-body">
+                    <Link to={"/checkout"}>
+                    <button
+                      type="button"
+                      className="btn btn-warning btn-block btn-lg"
+                    >
+                      Proceed to Checkout
+                    </button>
+                    </Link>
                   </div>
                 </div>
               </div>
             </div>
-          </section>
-        </>
-      );
-    }
-  };
-
-  return <div>{loading ? <div>Loading</div> : <div>{callCart()}</div>}</div>;
+          </div>
+        </section>
+      </>
+    );
+  }
 }
 
 export default Cart;
-
-
-    

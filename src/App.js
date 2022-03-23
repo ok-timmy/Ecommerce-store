@@ -8,99 +8,129 @@ import Checkout from "./Checkout/Checkout";
 
 function App() {
   const [cartlist, setCartlist] = useState({});
-  // const [products, setProducts] = useState({})
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [order, setOrder] = useState({});
+  const [errorMessage, setErrorMessage] = useState("");
 
-  async function fetchCart(setY) {
+  async function fetchCart() {
     await commerce.cart
       .retrieve()
       .then((cart) => {
-        const cartListProd = cart;
-        console.log(cartListProd);
-        // console.log(cartlist);
-        // return cart;
-        setY(cartListProd);
+        setCartlist(cart);
       })
       .catch((error) => {
         console.error("There was an error fetching the cart", error);
-        console.log(cartlist);
+        // console.log(cartlist);
       });
   }
 
-  async function fetchProducts( setX) {
-    await commerce.products.list().then((products)=> {
-      const setprod = () => {  setX(products.data) }
-       setprod();
-         console.log(products.data);
-         console.log(products, handleAddToCart);
-     })
-    }
+  const fetchProducts = async () => {
+    const data = await commerce.products.list();
+    // console.log(data);
+    setProducts(data);
+    setLoading(false);
+  };
 
   useEffect(() => {
-    // fetchProducts();
-    fetchCart(setCartlist);
+    fetchProducts();
+    fetchCart();
+    // console.log(products);
   }, []);
 
-  console.log(cartlist);
+  // console.log(cartlist);
 
   const handleAddToCart = async (productId, quantity) => {
     await commerce.cart
       .add(productId, quantity)
       .then((item) => {
-        console.log(item);
-        commerce.cart.contents().then((items) => setCartlist(items));
-        console.log(cartlist)
+        setCartlist(item.cart);
       })
       .catch((error) => {
         console.error("There was an error adding the item to the cart", error);
       });
     console.log("I added a new product", cartlist);
-    ;
   };
 
-  const handleUpdateCart = async (cart_id, Anumber) => {
+  const handleUpdateCart = async (cart_id, quantity) => {
     await commerce.cart
-      .update(cart_id, { quantity: Anumber })
-      .then((response) => console.log(response));
+      .update(cart_id, { quantity })
+      .then((response) => setCartlist(response.cart));
   };
 
   const handleDelete = async (product_id) => {
     await commerce.cart
       .remove(product_id)
-      .then((response) => console.log(response));
+      .then((response) => setCartlist(response.cart));
   };
 
   const handleEmptyCart = async () => {
-    await commerce.cart.empty().then((response) => console.log(response));
+    const newcart = await commerce.cart.refresh();
+    setCartlist(newcart);
+    // await commerce.cart.empty().then((response) => setCartlist(response.cart));
+  };
+
+  const handleCaptureCheckout = async (checkoutTokenId, newOrder) => {
+    try {
+      const incomingOrder = await commerce.checkout.capture(checkoutTokenId,newOrder);
+      // console.log(incomingOrder);
+      setOrder(incomingOrder);
+      // console.log(order);
+      handleEmptyCart();
+      
+    } catch (error) {
+      setErrorMessage(error.data);
+    }
   };
 
   return (
     <>
       <BrowserRouter>
         <Appbar total={cartlist.total_items} />
-        <Routes>
-          <Route
-            exact
-            path="/"
-            element={
-              <Products
-                fetchProducts={fetchProducts}
-                handleAddToCart={handleAddToCart}
-              />
-            }
-          ></Route>
-          <Route
-            path="/cart"
-            element={
-              <Cart
-                fetchCart={fetchCart}
-                handleUpdateCart={handleUpdateCart}
-                handleEmptyCart={handleEmptyCart}
-                handleDelete={handleDelete}
-              />
-            }
-          />
-          <Route path="/checkout" element={<Checkout />} />
-        </Routes>
+        {loading ? (
+          <div className=" d-flex justify-content-center mt-3">
+            <div className="spinner-border text-primary" role="status">
+              <span className="sr-only">Loading...</span>
+            </div>
+          </div>
+        ) : (
+          <Routes>
+            <Route
+              exact
+              path="/"
+              element={
+                <Products
+                  myproducts={products}
+                  // fetchProducts={fetchProducts}
+                  handleAddToCart={handleAddToCart}
+                />
+              }
+            ></Route>
+            <Route
+              path="/cart"
+              element={
+                <Cart
+                  // fetchCart={fetchCart}
+                  cartlist={cartlist}
+                  handleUpdateCart={handleUpdateCart}
+                  handleEmptyCart={handleEmptyCart}
+                  handleDelete={handleDelete}
+                />
+              }
+            />
+            <Route
+              path="/checkout"
+              element={
+                <Checkout
+                  cartlist={cartlist}
+                  handleCaptureCheckout={handleCaptureCheckout}
+                  order={order}
+                  errorMessage={errorMessage}
+                />
+              }
+            />
+          </Routes>
+        )}
       </BrowserRouter>
 
       {/* <Products  /> */}
