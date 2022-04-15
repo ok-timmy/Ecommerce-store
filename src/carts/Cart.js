@@ -9,12 +9,12 @@ function Cart({ cartlist, handleEmptyCart, handleUpdateCart, handleDelete }) {
   // console.log(cartlist);
   const cartitems = cartlist.line_items;
   // console.log(cartitems);
-  if (cartitems.length ===0) {
+  if (cartitems.length === 0) {
     return (
       <div className="d-flex align-items-center px-3 mt-4">
-      <h3 className="font-bold">
-        You have no items in your shopping cart, start adding some!
-      </h3>
+        <h3 className="font-bold">
+          You have no items in your shopping cart, start adding some!
+        </h3>
       </div>
     );
   } else {
@@ -28,19 +28,17 @@ function Cart({ cartlist, handleEmptyCart, handleUpdateCart, handleDelete }) {
                   <h3 className="fw-normal mb-0 text-black">Shopping Cart</h3>
                 </div>
 
-               
-                  {cartitems.map((cartitem) => {
-                    return (
-                      <CartItem
-                        cartitem={cartitem}
-                        key={cartitem.id}
-                        className="cart__inner"
-                        handleUpdateCart={handleUpdateCart}
-                        handleDelete={handleDelete}
-                      />
-                    );
-                  }
-                )}
+                {cartitems.map((cartitem) => {
+                  return (
+                    <CartItem
+                      cartitem={cartitem}
+                      key={cartitem.id}
+                      className="cart__inner"
+                      handleUpdateCart={handleUpdateCart}
+                      handleDelete={handleDelete}
+                    />
+                  );
+                })}
 
                 <div className="card mb-4">
                   <div className="card-body p-4 d-flex flex-row">
@@ -50,30 +48,31 @@ function Cart({ cartlist, handleEmptyCart, handleUpdateCart, handleDelete }) {
                     <h3>{cartlist.subtotal.formatted_with_symbol}</h3>
                   </div>
                 </div>
-
-                <div className="card mb-1">
-                  <div className="card-body d-flex justify-content-center align-items-center">
-                    <button
-                      type="button"
-                      className="btn btn-danger btn-block btn-lg w-75 "
-                      onClick={() => {
-                        handleEmptyCart();
-                      }}
-                    >
-                      Empty Cart
-                    </button>
+                <div className="d-lg-flex">
+                  <div className="card mr-lg-1 mb-1 col-lg-6">
+                    <div className="card-body">
+                      <button
+                        type="button"
+                        className="btn btn-danger btn-block btn-lg "
+                        onClick={() => {
+                          handleEmptyCart();
+                        }}
+                      >
+                        Empty Cart
+                      </button>
+                    </div>
                   </div>
-                </div>
-                <div className="card">
-                  <div className="card-body">
-                    <Link to={"/checkout"}>
-                    <button
-                      type="button"
-                      className="btn btn-warning btn-block btn-lg"
-                    >
-                      Proceed to Checkout
-                    </button>
-                    </Link>
+                  <div className="card mb-1 col-lg-6">
+                    <div className="card-body">
+                      <Link to={"/checkout"}>
+                        <button
+                          type="button"
+                          className="btn btn-warning btn-block btn-lg"
+                        >
+                          Proceed to Checkout
+                        </button>
+                      </Link>
+                    </div>
                   </div>
                 </div>
               </div>

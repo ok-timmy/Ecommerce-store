@@ -20,7 +20,7 @@ export default function Product({ product, handleAddToCart }) {
           />
           <div className="card-body">
             <div className="text-center mt-1">
-              <h4 className="card-title">{product.name}</h4>
+              <h5 className="card-title">{product.name}</h5>
               <h6 className="text-primary mb-1 pb-3">Starting at {product.price.formatted_with_symbol}</h6>
             </div>
 

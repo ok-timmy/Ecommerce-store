@@ -49,7 +49,7 @@ function App() {
       .catch((error) => {
         console.error("There was an error adding the item to the cart", error);
       });
-    console.log("I added a new product", cartlist);
+    // console.log("I added a new product", cartlist);
   };
 
   const handleUpdateCart = async (cart_id, quantity) => {
